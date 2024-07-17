@@ -30,4 +30,5 @@ coverage
 *.tsbuildinfo
 
 # django
+**/__pycache__
 *.pyc
