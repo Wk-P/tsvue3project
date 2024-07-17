@@ -23,7 +23,10 @@ npm install
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+# npm run dev
+# 自动启动并清理端口
+npm start 
+
 ```
 
 ### Type-Check, Compile and Minify for Production
