@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-const viteProcess = exec('npm run vite');
+const viteProcess = exec('npm run dev');
 
 viteProcess.stdout.on('data', (data) => {
   console.log(data.toString());
