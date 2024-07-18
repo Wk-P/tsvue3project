@@ -15,4 +15,3 @@ echo Starting Django...
 start powershell -NoExit -Command ".venv\\Scripts\\activate ; cd '%DJANGO_PATH%' ; python manage.py runserver"
 
 echo Both servers have been started.
-pause
