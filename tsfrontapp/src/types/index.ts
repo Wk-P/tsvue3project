@@ -18,3 +18,14 @@ export interface Item {
     desc: string;
     price: number;
 }
+
+export interface User {
+    id: number;
+    username: string;
+    status: string;
+}
+
+export interface UserLoginObj {
+    username: string,
+    password: string
+}

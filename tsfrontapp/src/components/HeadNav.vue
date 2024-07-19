@@ -7,7 +7,7 @@
                 >
             </li>
             <div class="left-blocks">
-                <li class="search">
+                <li class="search" v-if="isHomePage">
                     <input v-model="query" />
                     <button @click="search">搜索</button>
                 </li>
@@ -24,22 +24,31 @@
                     <RouterLink v-else="" to="/login" class="router-link-custom"
                         >login</RouterLink
                     >
-            </li>
-        </div>
+                </li>
+            </div>
         </ul>
     </nav>
 </template>
 
 <script lang="ts" setup name="HeadNav">
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { computed, ref } from "vue";
+import { RouterLink, useRoute } from "vue-router";
 import { useSearchStore } from "@/stores/index";
 import type { URL } from "@/types";
 import { initURL } from "@/types";
+import type { User } from "@/types"
+
+const route = useRoute();
+const isHomePage = computed(() => {
+    if (route.name == "home") {
+        return true;
+    }
+    return false;
+});
 
 const query = ref<string>("");
 const store = useSearchStore();
-const isLoggedIn = true;
+const isLoggedIn = ref(true);
 
 const checkLoginURL: URL = {
     proto: "http://",
@@ -49,11 +58,28 @@ const checkLoginURL: URL = {
     params: "",
 };
 
+// get from localStorage 
+// this is test
+const user: User = {
+    id: 0,
+    username: "张三",
+    status: "login",
+};
+
 // loginCheck
-fetch(initURL(checkLoginURL))
+fetch(initURL(checkLoginURL), {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+})
     .then((response) => response.json())
     .then((res) => {
-        console.log(res);
+        isLoggedIn.value = res.status;
+    })
+    .catch((error) => {
+        console.error(error);
     });
 
 function search() {
@@ -78,7 +104,6 @@ function search() {
         })
         .catch((error) => console.error(error));
 }
-
 </script>
 
 <style>

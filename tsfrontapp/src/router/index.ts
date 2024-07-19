@@ -6,6 +6,9 @@ import Product from "@/pages/product/App.vue";
 import Comments from "@/pages/comments/App.vue";
 import Details from "@/pages/details/App.vue";
 import UserCenter from "@/pages/usercenter/App.vue"
+import Orders from "@/pages/orders/App.vue";
+import Cart from "@/pages/cart/App.vue";
+import Favorite from "@/pages/favorite/App.vue"
 
 const routes = [
     {
@@ -29,12 +32,12 @@ const routes = [
         component: Product,
         children: [
             {
-                path: "/product/:productId/details",
+                path: "details",
                 name: "details",
                 component: Details,
             },
             {
-                path: "/product/:productId/comments",
+                path: "comments",
                 name: "comments",
                 component: Comments,
             },
@@ -44,6 +47,23 @@ const routes = [
         path: "/usercenter",
         name: "usercenter",
         component: UserCenter,
+        children: [
+            {
+                path: "orders",
+                name: "orders",
+                component: Orders,
+            },
+            {
+                path: "favorite",
+                name: "favorite",
+                component: Favorite,
+            },
+            {
+                path: "cart",
+                name: "cart",
+                component: Cart,
+            },
+        ]
     }
 ];
 

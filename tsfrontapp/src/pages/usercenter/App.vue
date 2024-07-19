@@ -2,14 +2,18 @@
     <HeadNav/>
     <div class="blocks">
         <div class="head-outer">
-            <img src="" alt="avator" />
-            <ul>
-                <li><RouterLink :to="{ name : 'orders' }" class="inner-block">订单</RouterLink></li>
-                <li><RouterLink :to="{ name : 'cart' }" class="inner-block">购物车</RouterLink></li>
-                <li><RouterLink :to="{ name : 'favorite' }" class="inner-block">收藏</RouterLink></li>
+            <div class="head-left">
+                <img src="" alt="avator" />
+                <div>{{ username }}</div>
+            </div>
+            <ul class="inner-block">
+                <li><RouterLink :to="{ name : 'orders' }">订单</RouterLink></li>
+                <li><RouterLink :to="{ name : 'cart' }">购物车</RouterLink></li>
+                <li><RouterLink :to="{ name : 'favorite' }">收藏</RouterLink></li>
             </ul>
         </div>
         <div class="top-line"></div>
+        <div class="user-block"></div>
         <div class="container-block">
             <RouterView></RouterView>
         </div>
@@ -19,6 +23,9 @@
 <script lang="ts" setup name="usercenter">
 import HeadNav from "@/components/HeadNav.vue";
 import { RouterLink, RouterView } from "vue-router";
+import { ref } from "vue";
+
+const username = ref("张三");
 </script>
 <style scoped>
 .blocks {
@@ -57,18 +64,52 @@ import { RouterLink, RouterView } from "vue-router";
 
 .head-outer ul li {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100px;
+}
+
+.head-outer ul li a {
+    cursor: pointer;
+    color: #222;
+    background-color: rgba(235, 235, 235, 1);
+    transition: all 0.2s ease-out;
+    width: 100%;
+    height: 100%;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    padding: 0 20px;
-    box-sizing: border-box;
+    text-decoration: none;
 }
 
-.head-outer ul li:hover {
+
+.head-outer ul li a:hover {
     cursor: pointer;
-    background-color: rgba(235, 235, 235, 1);
+    color: rgb(235, 235, 235);
+    background-color: rgba(15, 15, 15, 0.5);
 }
 
+.head-left {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.head-left div:last-child {
+    box-sizing: border-box;
+    text-align: center;
+    width: 100px;
+    font-size: large;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 4px solid brown;
+    border-left: none;
+}
 
 .container-block {
     width: calc(100% - 100px);
@@ -77,6 +118,7 @@ import { RouterLink, RouterView } from "vue-router";
     box-sizing: border-box;
     margin: 50px;
     padding: 30px;
+    border-radius: 5px;
 }
 
 .top-line {
@@ -91,33 +133,13 @@ import { RouterLink, RouterView } from "vue-router";
     );
 }
 
-.inner-block {
+.user-block {
+    width: calc(100% - 100px);
     box-sizing: border-box;
-    width: 100%;
-    background-color: rgba(243, 243, 243, 0.5);
-    border: solid #fff 5px;
+    border: 4px solid brown;
+    margin: 50px;
+    padding: 20px;
     border-radius: 5px;
-    margin: 20px 0;
 }
 
-.inner-block h3 {
-    padding: 30px 0;
-    text-align: center;
-    background-color: rgba(243, 243, 243, 0.5);
-}
-
-.inner-block ul {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    list-style: none;
-    width: 100%;
-    padding: 20px 0;
-}
-
-.inner-block ul li {
-    width: auto;
-    height: 200px;
-    background-color: rgba(243, 243, 243, 0.5);
-    margin: 0 20px;
-}
 </style>

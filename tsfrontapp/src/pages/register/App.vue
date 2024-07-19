@@ -173,7 +173,8 @@ form div {
     color: #555;
     text-decoration: none;
     text-align: center;
-    padding-left: 15px;
+    padding: 0 15px;
+    margin-left: 5px;
 }
 
 .login-register-link a:hover {

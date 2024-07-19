@@ -1,5 +1,5 @@
 <template>
-    <LoginRegisterHeadNav/>
+    <LoginRegisterHeadNav />
     <div class="block">
         <h2 class="title">登录</h2>
         <form>
@@ -9,53 +9,68 @@
             </div>
             <div><p class="sub-title">Password</p></div>
             <div class="sub-input">
-                <input type="password" v-model="password" autocomplete="on"/>
+                <input type="password" v-model="password" autocomplete="on" />
             </div>
             <div class="button-group"><button @click="login">登录</button></div>
         </form>
         <div class="login-register-link">
-            <div>还没账户?</div><RouterLink to="/register">注册</RouterLink>
+            <div>还没账户?</div>
+            <RouterLink to="/register">注册</RouterLink>
         </div>
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="login">
 import { ref } from "vue";
 import type { URL } from "@/types/index";
 import { initURL } from "@/types/index";
 import { RouterLink } from "vue-router";
+import { useRouter } from "vue-router";
+import type { UserLoginObj } from "@/types/index";
 import LoginRegisterHeadNav from "@/components/LoginRegisterHeadNav.vue";
 
 const username = ref("");
 const password = ref("");
+const route = useRouter();
 
-async function login() {
+function login() {
+    // 构造用户对象
+    const userLoginObject: UserLoginObj = {
+        username: username.value,
+        password: password.value,
+    };
+
     // 构造访问路径
     const loginURLObj: URL = {
         proto: "http://",
         host: "localhost",
         port: 8000,
-        url: "/user/login",
+        url: "/api/user/login",
         params: "",
     };
-    const loginURL: string = initURL(loginURLObj);
 
     // 发起后端请求
-    fetch(loginURL, {
+    fetch(initURL(loginURLObj), {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            username: username.value,
-            password: password.value,
-        }),
+        body: JSON.stringify(userLoginObject),
     })
         .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             return response.json();
         })
         .then((data) => {
             console.log(data);
+            alert(data);
+            route.push("/");
+        })
+        .catch((error) => {
+            console.log(error);
+            alert(error);
         });
 }
 </script>
@@ -142,11 +157,11 @@ form div {
     color: #555;
     text-decoration: none;
     text-align: center;
-    padding-left: 15px;
+    padding: 0 15px;
+    margin-left: 5px;
 }
 
 .login-register-link a:hover {
     color: #111;
 }
-
 </style>
