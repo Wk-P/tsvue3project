@@ -47,6 +47,7 @@ const routes = [
         path: "/usercenter",
         name: "usercenter",
         component: UserCenter,
+        redirect: { name: 'orders' }, // 设置默认路由重定向
         children: [
             {
                 path: "orders",

@@ -14,13 +14,20 @@
                 <li class="shopping-cart">
                     <img src="/shopping-cart.png" alt="shopping cart" />
                 </li>
-                <li class="user-link">
+                <li>
                     <RouterLink
                         v-if="isLoggedIn"
                         to="/usercenter"
                         class="router-link-custom"
-                        >user</RouterLink
+                        >{{ username }}</RouterLink
                     >
+                    <button
+                        v-if="isLoggedIn"
+                        class="logout-button"
+                        @click="logout"
+                    >
+                        Logout
+                    </button>
                     <RouterLink v-else="" to="/login" class="router-link-custom"
                         >login</RouterLink
                     >
@@ -31,14 +38,16 @@
 </template>
 
 <script lang="ts" setup name="HeadNav">
-import { computed, ref } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useSearchStore } from "@/stores/index";
 import type { URL } from "@/types";
 import { initURL } from "@/types";
-import type { User } from "@/types"
+import { userTokenStore } from "@/stores/index";
 
+const tokenStore = userTokenStore();
 const route = useRoute();
+const router = useRouter();
 const isHomePage = computed(() => {
     if (route.name == "home") {
         return true;
@@ -48,39 +57,14 @@ const isHomePage = computed(() => {
 
 const query = ref<string>("");
 const store = useSearchStore();
-const isLoggedIn = ref(true);
-
-const checkLoginURL: URL = {
-    proto: "http://",
-    host: "localhost",
-    port: 8000,
-    url: "/api/user/logincheck",
-    params: "",
-};
-
-// get from localStorage 
-// this is test
-const user: User = {
-    id: 0,
-    username: "张三",
-    status: "login",
-};
+const isLoggedIn = ref(false);
+const username = ref<string | null>(null);
 
 // loginCheck
-fetch(initURL(checkLoginURL), {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-})
-    .then((response) => response.json())
-    .then((res) => {
-        isLoggedIn.value = res.status;
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+function loginCheck() {
+    isLoggedIn.value = tokenStore.isAuthenticated;
+    username.value = tokenStore.username;
+}
 
 function search() {
     // search
@@ -104,6 +88,16 @@ function search() {
         })
         .catch((error) => console.error(error));
 }
+
+async function logout(event: Event) {
+    event.preventDefault();
+    tokenStore.clearToken();
+    window.location.reload();
+}
+
+onMounted(() => {
+    loginCheck();
+});
 </script>
 
 <style>
@@ -139,9 +133,22 @@ function search() {
     border: 2px solid #01000f;
     color: white;
     box-sizing: border-box;
+    transition: all 0.2s ease-out;
+
 }
 
-.head-nav ul li:not(.search):hover {
+.head-nav ul li:not(.search) a {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #01000f;
+    color: white;
+    box-sizing: border-box;
+}
+
+.head-nav ul li:not(.search) a:hover {
     cursor: pointer;
     height: 100%;
     display: flex;
@@ -153,7 +160,19 @@ function search() {
     border-radius: 4px;
 }
 
-.shopping-cart img {
+.left-blocks .shopping-cart:hover {
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid white;
+    color: white;
+    border-radius: 4px;
+}
+
+.left-blocks .shopping-cart img {
     padding: 0 20px;
 }
 
@@ -166,6 +185,7 @@ function search() {
     height: 100%;
     width: 100%;
     text-decoration: none;
+    transition: all 0.2s ease-out;
 }
 
 .left-blocks {
@@ -206,10 +226,31 @@ function search() {
     background-color: #3ff;
     border: none;
     color: black;
+    transition: all 0.2s ease-out;
+    border-radius: 4px;
 }
 
 .search button:hover {
     cursor: pointer;
     background-color: #efeaaa;
 }
+
+.logout-button {
+    box-sizing: border-box;
+    outline: none;
+    border: 2px solid #01000f;
+    background-color: #01000f;
+    color: white;
+    height: 100%;
+    width: 100%;
+    transition: all 0.2s ease-out;
+    padding: 0 20px;
+    font-size: 1rem;
+}
+
+.logout-button:hover {
+    cursor: pointer;
+    border: 2px solid white;
+}
+
 </style>

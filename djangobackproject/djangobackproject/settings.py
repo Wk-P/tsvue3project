@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from corsheaders.defaults import default_headers, default_methods
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,28 +135,24 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
     ],
 }
+
 CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOW_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
-    "http://localhost:3008",
 ]
 
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-    "VIEW",
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = default_methods
+
+CORS_ALLOW_HEADERS = default_headers
 
 AUTH_USER_MODEL = 'users.CustomUser'
 

@@ -26,51 +26,52 @@ import type { URL } from "@/types/index";
 import { initURL } from "@/types/index";
 import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
-import type { UserLoginObj } from "@/types/index";
+import { userTokenStore } from "@/stores/index"
+
 import LoginRegisterHeadNav from "@/components/LoginRegisterHeadNav.vue";
 
+const tokenStore = userTokenStore();
+const router = useRouter();
 const username = ref("");
 const password = ref("");
-const route = useRouter();
 
-function login() {
-    // 构造用户对象
-    const userLoginObject: UserLoginObj = {
-        username: username.value,
-        password: password.value,
-    };
+function login(event: Event) {
+    event.preventDefault();
 
     // 构造访问路径
     const loginURLObj: URL = {
         proto: "http://",
         host: "localhost",
         port: 8000,
-        url: "/api/user/login",
+        url: "/api/token",
         params: "",
     };
 
-    // 发起后端请求
+    // 向后端Token处理器发出请求
     fetch(initURL(loginURLObj), {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(userLoginObject),
+        body: JSON.stringify({
+            username: username.value,
+            password: password.value,
+        }),
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error("User authenticated failed");
             }
             return response.json();
         })
         .then((data) => {
-            console.log(data);
-            alert(data);
-            route.push("/");
+            // save token and into pinia
+            tokenStore.setToken(data.access, username.value);
+            router.push("/");
         })
         .catch((error) => {
             console.log(error);
-            alert(error);
+            alert(error.message);
         });
 }
 </script>
