@@ -12,6 +12,29 @@
             <div class="product-img">
                 <img src="/lv.png" alt="item-img" />
             </div>
+            <div class="button-group">
+                <div class="add-order-button">
+                    <ul>
+                        <li class="number-button">
+                            <button @click="subSum">-</button>
+                        </li>
+                        <li class="number-block">
+                            <input type="text" v-model="orderSum" />
+                        </li>
+                        <li class="number-button">
+                            <button @click="addSum">+</button>
+                        </li>
+                    </ul>
+                    <button @click="addOrder">Order</button>
+                </div>
+                <div class="add-favorite-button">
+                    <button @click="addFavorite">Favorite</button>
+                </div>
+                <div class="add-comments-button">
+                    <button @click="addComment">Comments</button>
+                </div>
+            </div>
+
             <div class="details">
                 <ul class="details-list">
                     <li>
@@ -33,18 +56,98 @@
 
 <script lang="ts" setup name="product">
 import HeadNav from "@/components/HeadNav.vue";
-import { useItemStore } from "@/stores";
-import { ref, watch, onMounted, computed } from "vue";
+import router from "@/router";
+import { useItemStore, userTokenStore } from "@/stores";
+import { ref, watch, computed } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 const store = useItemStore();
 
 // 动态计算 item 属性
 const item = computed(() => store.item);
-
 const currentComponent = ref("details");
 
 // 获取路由信息
 const route = useRoute();
+
+const tokenStore = userTokenStore();
+
+const orderSum = ref<number>(1);
+
+function addSum() {
+    orderSum.value = Number(orderSum.value) + 1;
+}
+
+function subSum() {
+    if (orderSum.value <= 1) {
+        return;
+    }
+    orderSum.value = Number(orderSum.value) - 1;
+}
+
+function addOrder() {
+    const itemId = item.value?.id;
+    if (itemId === null) {
+        alert("Item id wrong!");
+        return;
+    }
+
+    if (orderSum.value < 1) {
+        orderSum.value = 1;
+        alert("Wrong sum of order");
+        return;
+    }
+
+    // login check
+    if (tokenStore.username === null) {
+        alert("Please login!");
+        router.push("/login");
+        return;
+    }
+
+    const message = `Order:\n Item name: ${item.value?.name}\nUser: ${tokenStore.username}\nSum of items: ${orderSum.value}\nConfirm your order and continue?`
+
+    if(!confirm(message)) {
+        return;
+    }
+
+
+    const url = "api/orders/create";
+    let params = "";
+
+    if (params != "") {
+        params += '/';
+    }
+
+    fetch(`${url}/${params}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                itemId: itemId,
+                username: tokenStore.username,
+                orderSum: orderSum.value,
+            }),
+        }
+    )
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network invalid as an error");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            alert(`Order has been submitted\nOrder id: ${data.order_id}\n`);
+        })
+        .catch((error) => {
+            console.error(error.message);
+        });
+}
+
+function addFavorite() {}
+
+function addComment() {}
 
 // 监听路由变化
 watch(
@@ -184,5 +287,132 @@ watch(
 .head-on a:hover {
     cursor: pointer;
     border: 2px solid #ccc;
+}
+
+.button-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.add-order-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 50px;
+    padding: 20px;
+}
+
+.add-order-button ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style: none;
+    height: 100%;
+    width: 60%;
+    box-sizing: border-box;
+}
+
+.add-order-button ul li {
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.add-order-button ul li:first-child {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    margin-right: 5px;
+}
+
+.add-order-button ul li:last-child {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin-left: 5px;
+}
+
+.add-order-button .number-button {
+    box-sizing: border-box;
+    height: 100%;
+    width: 25%;
+}
+
+.add-order-button ul .number-button button {
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 10px 2px #444;
+    background-color: #ddd;
+    transition: all 0.2s ease-in-out;
+    font-size: 1.2rem;
+}
+
+.add-order-button ul .number-block input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    box-shadow: 0 0 10px 2px #444;
+    border: 2px solid #eee;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.add-order-button .number-button button:hover {
+    cursor: pointer;
+    background-color: #444;
+    color: white;
+}
+
+.add-order-button > button:last-child {
+    box-sizing: border-box;
+    height: 100%;
+    width: 28%;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 10px 2px #444;
+    background-color: #ddd;
+    transition: all 0.2s ease-in-out;
+    padding: 0 20px;
+}
+
+.add-order-button button:hover {
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.add-favorite-button,
+.add-comments-button {
+    width: 100%;
+    height: 50px;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.add-favorite-button button,
+.add-comments-button button {
+    width: 40%;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 2px solid #eee;
+    box-shadow: 0 0 10px 2px #444;
+    background-color: #ddd;
+    transition: all 0.2s ease-in-out;
+}
+.add-favorite-button button:hover,
+.add-comments-button button:hover {
+    cursor: pointer;
+    background-color: #fff;
 }
 </style>

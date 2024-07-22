@@ -1,5 +1,5 @@
 <template>
-    <LoginRegisterHeadNav/>
+    <LoginRegisterHeadNav />
     <div class="block">
         <h2 class="title">注册</h2>
         <form>
@@ -13,42 +13,43 @@
             </div>
             <div><p class="sub-title">Password</p></div>
             <div class="sub-input">
-                <input type="password" v-model="password1" autocomplete="off"/>
+                <input type="password" v-model="password1" autocomplete="off" />
             </div>
             <div><p class="sub-title">Re-enter password</p></div>
             <div class="sub-input">
-                <input type="password" v-model="password2" autocomplete="off"/>
+                <input type="password" v-model="password2" autocomplete="off" />
             </div>
-            <div class="button-group"><button @click="register">注册</button></div>
+            <div class="button-group">
+                <button @click="register">注册</button>
+            </div>
         </form>
         <div class="login-register-link">
-            <div>已有账户?</div><RouterLink to="/login">登录</RouterLink>
+            <div>已有账户?</div>
+            <RouterLink to="/login">登录</RouterLink>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup name="register">
 import { ref } from "vue";
-import type { URL } from "@/types/index";
-import { initURL } from "@/types/index";
 import LoginRegisterHeadNav from "@/components/LoginRegisterHeadNav.vue";
 
-const username = ref("");
-const password1 = ref("");
-const password2 = ref("");
-const email = ref("");
-const enableRegister = ref(false);
+const backendHost = "192.168.1.6";
+// const backendHost = "localhost";
+
+const username = ref<string>("");
+const password1 = ref<string>("");
+const password2 = ref<string>("");
+const email = ref<string>("");
+const enableRegister = ref<Boolean>(false);
 
 async function register() {
-    // 构造访问路径
-    const loginURLObj: URL = {
-        proto: "http://",
-        host: "localhost",
-        port: 8000,
-        url: "/user/login",
-        params: "",
-    };
-    const loginURL: string = initURL(loginURLObj);
+    const url = '/user/login';
+    let params = "";
+
+    if (params != "") {
+        params += "/";
+    }
 
     // 检查输入是否合规
     if (username.value == "") {
@@ -64,14 +65,43 @@ async function register() {
         }
     }
 
+    function isValidUsername(name: string) {
+        const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
+        return usernameRegex.test(name);
+    }
+
+    function isValidEmail(email: string) {
+        const emailRegex = /^(?=.{1,256}$)(?=.{1,64}@.{1,255}$)(?=.{1,64}$)(?=.{1,255}@)(?=[a-zA-Z0-9._%+-]+@)(?=[a-zA-Z0-9.-]+)(?=[a-zA-Z]{2,}$)(?=\S)(?!.*[\s])[^@][^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function isValidPassword(pswd: string) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return passwordRegex.test(pswd);
+    }
+
+    if (isValidUsername(username.value)) {
+        alert("名称格式不正确");
+        return;
+    }
+
+    if (isValidEmail(email.value)) {
+        alert("邮箱格式不正确");
+        return;
+    }
+
+    if (isValidEmail(password1.value)) {
+        alert("密码格式不正确");
+        return;
+    }
+
     if (!enableRegister.value) {
         alert("请先检查用户名");
         return;
     }
-    
 
     // 发起后端请求
-    fetch(loginURL, {
+    fetch(`${url}/${params}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -86,7 +116,11 @@ async function register() {
             return response.json();
         })
         .then((data) => {
-            
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error(error);
+            alert(error.message);
         });
 }
 </script>

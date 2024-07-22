@@ -22,8 +22,6 @@
 
 <script lang="ts" setup name="login">
 import { ref } from "vue";
-import type { URL } from "@/types/index";
-import { initURL } from "@/types/index";
 import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
 import { userTokenStore } from "@/stores/index"
@@ -35,20 +33,21 @@ const router = useRouter();
 const username = ref("");
 const password = ref("");
 
+const backendHost = "192.168.1.6";
+// const backendHost = "localhost";
+
 function login(event: Event) {
     event.preventDefault();
 
-    // 构造访问路径
-    const loginURLObj: URL = {
-        proto: "http://",
-        host: "localhost",
-        port: 8000,
-        url: "/api/token",
-        params: "",
-    };
+    const url = "/api/token";
+    let params = "";
+    
+    if (params != "") {
+        params += "/";
+    }
 
     // 向后端Token处理器发出请求
-    fetch(initURL(loginURLObj), {
+    fetch(`${url}/${params}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -66,7 +65,9 @@ function login(event: Event) {
         })
         .then((data) => {
             // save token and into pinia
+            console.log(data);
             tokenStore.setToken(data.access, username.value);
+            debugger;
             router.push("/");
         })
         .catch((error) => {

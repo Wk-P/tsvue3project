@@ -31,30 +31,27 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch } from "vue";
-import type { URL, Item } from "@/types/index";
-import { initURL } from "@/types/index";
+import type { Item } from "@/types/index";
 import { RouterLink } from "vue-router";
 import HeadNav from "@/components/HeadNav.vue";
 import { useItemStore, useSearchStore } from "@/stores/index";
 
 const itemStore = useItemStore();
 const searchStore = useSearchStore();
-
-// 请求url 构造
-const queryBaseURLObj: URL = {
-    proto: "http://",
-    host: "localhost",
-    port: 8000,
-    url: "/api/items/all",
-    params: "",
-};
-const queryBaseURL: string = initURL(queryBaseURLObj);
 const itemsList = ref<Item[]>([]);
 
 // 获取商品列表数据
 const fetchItems = async () => {
+    const url = "api/items/all";
+    let params = "";
+
+    if (params != "") {
+        params += "/";
+    }
+
     try {
-        const response = await fetch(queryBaseURL);
+        // const response = await fetch(queryBaseURL);
+        const response = await fetch(`${url}/${params}`);
         if (!response.ok) {
             throw new Error("Fetch failed");
         }

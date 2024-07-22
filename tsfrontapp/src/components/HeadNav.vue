@@ -26,10 +26,10 @@
                         class="logout-button"
                         @click="logout"
                     >
-                        Logout
+                        登出
                     </button>
                     <RouterLink v-else="" to="/login" class="router-link-custom"
-                        >login</RouterLink
+                        >登录</RouterLink
                     >
                 </li>
             </div>
@@ -38,11 +38,9 @@
 </template>
 
 <script lang="ts" setup name="HeadNav">
-import { computed, onMounted, ref } from "vue";
+import { computed, isReactive, onMounted, ref } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useSearchStore } from "@/stores/index";
-import type { URL } from "@/types";
-import { initURL } from "@/types";
 import { userTokenStore } from "@/stores/index";
 
 const tokenStore = userTokenStore();
@@ -67,21 +65,14 @@ function loginCheck() {
 }
 
 function search() {
-    // search
-    const urlObj: URL = {
-        proto: "http://",
-        host: "localhost",
-        port: 8000,
-        url: "/api/items/search/",
-        params: query.value,
-    };
+    const url = "/api/items/search";
 
-    if (urlObj.params == "") {
-        urlObj.url = "/api/items/all";
+    // search
+    if (query.value == "") {
+        query.value += "/all";
     }
 
-    const urlStr: string = initURL(urlObj);
-    fetch(urlStr)
+    fetch(`${url}/${query.value}`)
         .then((response) => response.json())
         .then((res) => {
             store.setResults(res);
@@ -227,7 +218,6 @@ onMounted(() => {
     border: none;
     color: black;
     transition: all 0.2s ease-out;
-    border-radius: 4px;
 }
 
 .search button:hover {
