@@ -73,6 +73,7 @@ async function login(event: Event) {
             })
             .then((data) => {
                 // save token and into pinia
+                
                 tokenStore.setToken(csrfToken, username.value);
                 router.push("/");
             })

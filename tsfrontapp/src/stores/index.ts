@@ -1,6 +1,6 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import type { Item } from "@/types/index";
 
 
@@ -62,20 +62,41 @@ export const useSearchStore = defineStore("search", () => {
 
 
 export const userTokenStore = defineStore("token", () => {
-    const token = ref<string | null>(null);
-    const username = ref<string | null>(null);
-    // check token existing
+    const token = ref<string | null>(localStorage.getItem('token') || null);
+    const username = ref<string | null>(localStorage.getItem('username') || null);
+
     const isAuthenticated = computed(() => token.value !== null);
 
     function setToken(newToken: string, name: string | null) {
         token.value = newToken;
         username.value = name;
+
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('username', name || '');
     }
 
     function clearToken() {
         token.value = null;
         username.value = null;
+
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
     }
+
+    // Watch for changes in token and username to keep localStorage in sync
+    watch([token, username], () => {
+        if (token.value) {
+            localStorage.setItem('token', token.value);
+        } else {
+            localStorage.removeItem('token');
+        }
+
+        if (username.value) {
+            localStorage.setItem('username', username.value);
+        } else {
+            localStorage.removeItem('username');
+        }
+    });
 
     return {
         token,
@@ -83,6 +104,5 @@ export const userTokenStore = defineStore("token", () => {
         username,
         setToken,
         clearToken,
-    }
-
-})
+    };
+});

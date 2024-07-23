@@ -30,6 +30,9 @@
                 <div class="add-favorite-button">
                     <button @click="addFavorite">Favorite</button>
                 </div>
+                <div class="add-cart-button">
+                    <button @click="addToCart">Add to cart</button>
+                </div>
                 <div class="add-comments-button">
                     <button @click="addComment">Comments</button>
                 </div>
@@ -80,6 +83,31 @@ function subSum() {
     }
     orderSum.value = Number(orderSum.value) - 1;
 }
+
+async function addToCart() {
+    let username = tokenStore.username;
+    
+    const csrftoken = await getCSRFToken();
+    const url = "/backend/api/user/";
+    let params = "";
+
+    if (username !== null) {
+        params == username;
+        params += "/";
+    }
+
+    fetch(`${url}/${params}`)
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`Network Invalid`);
+        }
+    }).then((data) => {
+        alert("Add to cart");
+    }).catch((error) => {
+        console.error(error.message);
+    })
+}
+
 
 function createOrder() {
     const itemId = item.value?.id;
@@ -388,7 +416,8 @@ watch(
 }
 
 .add-favorite-button,
-.add-comments-button {
+.add-comments-button,
+.add-cart-button {
     width: 100%;
     height: 50px;
     padding: 20px 0;
@@ -398,7 +427,8 @@ watch(
 }
 
 .add-favorite-button button,
-.add-comments-button button {
+.add-comments-button button,
+.add-cart-button button {
     width: 40%;
     font-size: 1rem;
     border-radius: 4px;
@@ -409,7 +439,8 @@ watch(
 }
 
 .add-favorite-button button:hover,
-.add-comments-button button:hover {
+.add-comments-button button:hover,
+.add-cart-button button:hover {
     cursor: pointer;
     background-color: #fff;
 }

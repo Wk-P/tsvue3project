@@ -4,7 +4,6 @@
         <div class="head-outer">
             <div class="head-left">
                 <img src="" alt="avator" />
-                <div>{{ username }}</div>
             </div>
             <ul class="inner-block">
                 <li><RouterLink :to="{ name : 'orders' }">订单</RouterLink></li>
@@ -13,7 +12,9 @@
             </ul>
         </div>
         <div class="top-line"></div>
-        <div class="user-block"></div>
+        <div class="user-block">
+            <div>{{ username }}</div>
+        </div>
         <div class="container-block">
             <RouterView></RouterView>
         </div>
@@ -24,8 +25,15 @@
 import HeadNav from "@/components/HeadNav.vue";
 import { RouterLink, RouterView } from "vue-router";
 import { ref } from "vue";
+import { userTokenStore } from "@/stores";
 
-const username = ref("张三");
+const tokenStore = userTokenStore();
+const username = ref("");
+if (tokenStore.username === null) {
+    username.value = "";
+} else {
+    username.value = tokenStore.username;
+}
 </script>
 <style scoped>
 .blocks {
@@ -98,7 +106,7 @@ const username = ref("张三");
     flex-direction: row;
 }
 
-.head-left div:last-child {
+/* .head-left div:last-child {
     box-sizing: border-box;
     text-align: center;
     width: 100px;
@@ -109,7 +117,7 @@ const username = ref("张三");
     justify-content: center;
     border: 4px solid brown;
     border-left: none;
-}
+} */
 
 .container-block {
     width: calc(100% - 100px);

@@ -98,8 +98,9 @@ function search() {
 
 function logout(event: Event) {
     event.preventDefault();
-    tokenStore.clearToken();
-    router.push('/');
+    const store = userTokenStore();
+    store.clearToken();
+    window.location.href = "/";
 }
 
 onMounted(() => {
