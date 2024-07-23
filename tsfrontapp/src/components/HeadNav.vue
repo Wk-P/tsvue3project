@@ -11,7 +11,7 @@
                     <input v-model="query" />
                     <button @click="search">搜索</button>
                 </li>
-                <li class="shopping-cart">
+                <li v-if="isLoggedIn" class="shopping-cart">
                     <img src="/shopping-cart.png" alt="shopping cart" />
                 </li>
                 <li>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup name="HeadNav">
-import { computed, isReactive, onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useSearchStore } from "@/stores/index";
 import { userTokenStore } from "@/stores/index";
@@ -65,7 +65,7 @@ function loginCheck() {
 }
 
 function search() {
-    const url = "/api/items/search";
+    const url = "/backend/api/items/search";
 
     // search
     if (query.value == "") {
@@ -80,10 +80,10 @@ function search() {
         .catch((error) => console.error(error));
 }
 
-async function logout(event: Event) {
+function logout(event: Event) {
     event.preventDefault();
     tokenStore.clearToken();
-    window.location.reload();
+    window.location.href = '/';
 }
 
 onMounted(() => {

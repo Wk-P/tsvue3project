@@ -33,95 +33,99 @@
 <script lang="ts" setup name="register">
 import { ref } from "vue";
 import LoginRegisterHeadNav from "@/components/LoginRegisterHeadNav.vue";
-
-const backendHost = "192.168.1.6";
-// const backendHost = "localhost";
+import { getCSRFToken } from "@/utils/validate";
 
 const username = ref<string>("");
 const password1 = ref<string>("");
 const password2 = ref<string>("");
 const email = ref<string>("");
-const enableRegister = ref<Boolean>(false);
 
-async function register() {
-    const url = '/user/login';
-    let params = "";
+function register() {
+    getCSRFToken().then((csrftoken) => {
+        // 检查输入是否合规
+        if (username.value == "") {
+            alert("请输入用户名");
+            return;
+        }
 
-    if (params != "") {
-        params += "/";
-    }
-
-    // 检查输入是否合规
-    if (username.value == "") {
-        alert("请输入用户名");
-        return;
-    } else {
         if (password1.value == "" && password1.value == "") {
             alert("请输入密码");
             return;
-        } else if (password1.value != password2.value) {
+        }
+
+        if (password1.value != password2.value) {
             alert("两次输入密码不一致");
             return;
         }
-    }
 
-    function isValidUsername(name: string) {
-        const usernameRegex = /^[a-zA-Z0-9._]{3,20}$/;
-        return usernameRegex.test(name);
-    }
+        function isValidUsername(name: string) {
+            const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+            return usernameRegex.test(name);
+        }
 
-    function isValidEmail(email: string) {
-        const emailRegex = /^(?=.{1,256}$)(?=.{1,64}@.{1,255}$)(?=.{1,64}$)(?=.{1,255}@)(?=[a-zA-Z0-9._%+-]+@)(?=[a-zA-Z0-9.-]+)(?=[a-zA-Z]{2,}$)(?=\S)(?!.*[\s])[^@][^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
+        function isValidEmail(email: string) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
 
-    function isValidPassword(pswd: string) {
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(pswd);
-    }
+        function isValidPassword(pswd: string) {
+            const passwordRegex =
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return passwordRegex.test(pswd);
+        }
 
-    if (isValidUsername(username.value)) {
-        alert("名称格式不正确");
-        return;
-    }
+        if (!isValidUsername(username.value)) {
+            alert("名称格式不正确");
+            return;
+        }
 
-    if (isValidEmail(email.value)) {
-        alert("邮箱格式不正确");
-        return;
-    }
+        if (!isValidEmail(email.value)) {
+            alert("邮箱格式不正确");
+            return;
+        }
 
-    if (isValidEmail(password1.value)) {
-        alert("密码格式不正确");
-        return;
-    }
+        // test 密码不做检查
+        const passwordTest = true;
+        if (!passwordTest) {
+            if (!isValidPassword(password1.value)) {
+                alert("密码格式不正确");
+                return;
+            }
+        }
 
-    if (!enableRegister.value) {
-        alert("请先检查用户名");
-        return;
-    }
+        const url = "/backend/api/user/register";
+        let params = "";
 
-    // 发起后端请求
-    fetch(`${url}/${params}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username: username.value,
-            email: email.value,
-            password: password1.value,
-        }),
-    })
-        .then((response) => {
-            return response.json();
+        console.log(`${url}/${params}`);
+        debugger;
+        // 发起后端请求
+        fetch(`${url}/${params}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken || '',
+            },
+            body: JSON.stringify({
+                username: username.value,
+                password: password1.value,
+                email: email.value,
+            }),
         })
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.error(error);
-            alert(error.message);
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    const err = response.json();
+                    throw new Error(err.toString());
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert(data);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert(error.message);
+            });
+    });
 }
 </script>
 <style scoped>

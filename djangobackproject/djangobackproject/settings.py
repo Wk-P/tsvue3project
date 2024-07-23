@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',
     'corsheaders',
+    'csrftoken',
     'items',
     'users',
     'orders',
@@ -136,22 +136,25 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
     ],
 }
 
-CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    'http://192.168.1.6:3000',  # 替换为你的前端地址
+]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.1.6:3000',  # 前端地址
+]
 
-CORS_ALLOW_METHODS = default_methods
-
-CORS_ALLOW_HEADERS = default_headers
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CSRF_USE_SESSIONS = False
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
 LANGUAGE_CODE = 'zh-hans'
 
-APPEND_SLASH = True
+APPEND_SLASH = TrueCSRF_COOKIE_HTTPONLY = True

@@ -24,7 +24,8 @@
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
-import { userTokenStore } from "@/stores/index"
+import { userTokenStore } from "@/stores/index";
+import { getCSRFToken } from "@/utils/validate";
 
 import LoginRegisterHeadNav from "@/components/LoginRegisterHeadNav.vue";
 
@@ -33,47 +34,41 @@ const router = useRouter();
 const username = ref("");
 const password = ref("");
 
-const backendHost = "192.168.1.6";
-// const backendHost = "localhost";
-
-function login(event: Event) {
+async function login(event: Event) {
     event.preventDefault();
 
-    const url = "/api/token";
-    let params = "";
-    
-    if (params != "") {
-        params += "/";
-    }
-
-    // 向后端Token处理器发出请求
-    fetch(`${url}/${params}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username: username.value,
-            password: password.value,
-        }),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("User authenticated failed");
-            }
-            return response.json();
+    getCSRFToken().then((csrfToken) => {
+        const url = "/backend/api/user/login";
+        let params = "";
+        
+        // 向后端Token处理器发出请求
+        fetch(`${url}/${params}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken || "",
+            },
+            body: JSON.stringify({
+                username: username.value,
+                password: password.value,
+            }),
         })
-        .then((data) => {
-            // save token and into pinia
-            console.log(data);
-            tokenStore.setToken(data.access, username.value);
-            debugger;
-            router.push("/");
-        })
-        .catch((error) => {
-            console.log(error);
-            alert(error.message);
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("User authenticated failed");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // save token and into pinia
+                tokenStore.setToken(data.access, username.value);
+                router.push("/");
+            })
+            .catch((error) => {
+                console.log(error);
+                alert(error.message);
+            });
+    });
 }
 </script>
 <style scoped>

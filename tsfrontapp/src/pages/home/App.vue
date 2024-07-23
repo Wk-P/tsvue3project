@@ -42,12 +42,8 @@ const itemsList = ref<Item[]>([]);
 
 // 获取商品列表数据
 const fetchItems = async () => {
-    const url = "api/items/all";
+    const url = "/backend/api/items/all";
     let params = "";
-
-    if (params != "") {
-        params += "/";
-    }
 
     try {
         // const response = await fetch(queryBaseURL);

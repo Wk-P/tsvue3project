@@ -25,7 +25,7 @@
                             <button @click="addSum">+</button>
                         </li>
                     </ul>
-                    <button @click="addOrder">Order</button>
+                    <button @click="createOrder">Order</button>
                 </div>
                 <div class="add-favorite-button">
                     <button @click="addFavorite">Favorite</button>
@@ -84,7 +84,7 @@ function subSum() {
     orderSum.value = Number(orderSum.value) - 1;
 }
 
-function addOrder() {
+function createOrder() {
     const itemId = item.value?.id;
     if (itemId === null) {
         alert("Item id wrong!");
@@ -111,12 +111,8 @@ function addOrder() {
     }
 
 
-    const url = "api/orders/create";
+    const url = "/backend/api/orders/create";
     let params = "";
-
-    if (params != "") {
-        params += '/';
-    }
 
     fetch(`${url}/${params}`,
         {
