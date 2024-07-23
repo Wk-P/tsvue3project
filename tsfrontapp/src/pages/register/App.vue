@@ -40,7 +40,9 @@ const password1 = ref<string>("");
 const password2 = ref<string>("");
 const email = ref<string>("");
 
-function register() {
+function register(event: Event) {
+    event.preventDefault();
+
     getCSRFToken().then((csrftoken) => {
         // 检查输入是否合规
         if (username.value == "") {
@@ -96,14 +98,16 @@ function register() {
         const url = "/backend/api/user/register";
         let params = "";
 
-        console.log(`${url}/${params}`);
-        debugger;
+        if (params == "") {
+            params += '/';
+        }
+
         // 发起后端请求
         fetch(`${url}/${params}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken || '',
+                "X-CSRFToken": csrftoken,
             },
             body: JSON.stringify({
                 username: username.value,
@@ -113,13 +117,13 @@ function register() {
         })
             .then((response) => {
                 if (!response.ok) {
-                    const err = response.json();
-                    throw new Error(err.toString());
+                    throw new Error("Register User Conflict");
                 }
                 return response.json();
             })
             .then((data) => {
-                alert(data);
+                console.log(data.message);
+                window.location.href = ('/');
             })
             .catch((error) => {
                 console.error(error);

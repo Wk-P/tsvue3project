@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from orders.models import Order
 from items.models import Item
 from users.models import CustomUser
-
+from rest_framework import status
 import datetime
 
 class Orders(APIView):
@@ -62,3 +62,50 @@ class OrderCreate(APIView):
             print()
 
         return Response({"message": "OK", "error": error, "order_id": order_id})
+    
+
+
+class OrdersSearch(APIView):
+    def get(self, request):
+        return Response({"message": "OK"})
+
+    def post(self, request, username):
+        # response data
+        userId = None
+
+        print(username)
+        if username:
+            # user search
+            users = CustomUser.objects.filter(username=username)
+            print(users)
+            if not users.exists():
+                return Response({"result": None}, status=status.HTTP_204_NO_CONTENT)
+            
+            # response data
+            user = users.first()
+            userId = user.id
+            ordersList = list()
+            
+            orders = Order.objects.filter(user=user)
+            if not orders.exists():
+                return Response({"result": None}, status=status.HTTP_204_NO_CONTENT)
+                # to list for response
+
+            for order in orders:
+                order_object = dict()
+                order_object['item-name'] = order.item.name
+                order_object['updated-time'] = order.updated_at
+                order_object['created-time'] = order.created_at
+                order_object['quantity'] = order.quantity
+                order_object['price'] = order.item.price
+                order_object['total-price'] = order.total_price
+                order_object['order-id'] = order.order_id
+                
+                ordersList.append(order_object)
+
+            return Response({"userId": userId, "username": username, "orders": ordersList}, status=status.HTTP_200_OK)
+        else:
+            return Response({"result": None}, status=status.HTTP_404_NOT_FOUND)
+
+
+            

@@ -1,4 +1,4 @@
-export function getCSRFToken(): Promise<string | null> {
+export function getCSRFToken(): Promise<string> {
     return fetch("/backend/api/csrftoken/")
     .then(response => {
         if (!response.ok) {
@@ -7,9 +7,8 @@ export function getCSRFToken(): Promise<string | null> {
             return response.json();
         }
     }).then(data => {
-        return data['csrf-token'] || null;
-    }).catch( error => {
-        console.error("获取 CSRF 令牌失败 :", error.message);
-        return null;
+        return data['csrf-token'];
+    }).catch(error => {
+        return error;
     });
 }

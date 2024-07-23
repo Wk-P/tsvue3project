@@ -12,11 +12,15 @@ class Items(APIView):
 
 class ItemsSearch(APIView):
     def search(self, query: str):
-        searchList = list(Item.objects.filter(name__icontains=query).values())
-        return searchList
+        searchResultList = list(Item.objects.filter(name__icontains=query).values())
+        print(searchResultList)
+        return searchResultList
 
 
     def get(self, request, name):
-        searchResults = self.search(name)
+        if name == "all":
+            searchResults = list(Item.objects.all().values())
+        else:
+            searchResults = self.search(name)
         print(searchResults)
         return Response(searchResults)

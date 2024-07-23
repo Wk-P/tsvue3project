@@ -3,11 +3,15 @@
     <div class="block">
         <h2 class="title">登录</h2>
         <form>
-            <div><p class="sub-title">Email or ID</p></div>
+            <div>
+                <p class="sub-title">Email or ID</p>
+            </div>
             <div class="sub-input">
                 <input type="text" v-model="username" />
             </div>
-            <div><p class="sub-title">Password</p></div>
+            <div>
+                <p class="sub-title">Password</p>
+            </div>
             <div class="sub-input">
                 <input type="password" v-model="password" autocomplete="on" />
             </div>
@@ -38,15 +42,23 @@ async function login(event: Event) {
     event.preventDefault();
 
     getCSRFToken().then((csrfToken) => {
+        if (csrfToken === null) {
+            throw new Error("Invalid Token");
+        }
+
         const url = "/backend/api/user/login";
         let params = "";
-        
+
+        if (params == '') {
+            params += '/';
+        }
+
         // 向后端Token处理器发出请求
         fetch(`${url}/${params}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken || "",
+                "X-CSRFToken": csrfToken,
             },
             body: JSON.stringify({
                 username: username.value,
@@ -55,20 +67,22 @@ async function login(event: Event) {
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error("User authenticated failed");
+                    throw new Error("Authentication Invalid");
                 }
                 return response.json();
             })
             .then((data) => {
                 // save token and into pinia
-                tokenStore.setToken(data.access, username.value);
+                tokenStore.setToken(csrfToken, username.value);
                 router.push("/");
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 alert(error.message);
             });
-    });
+    }).catch(error => {
+        console.error(error.message);
+    })
 }
 </script>
 <style scoped>

@@ -12,12 +12,14 @@
                     <button @click="search">搜索</button>
                 </li>
                 <li v-if="isLoggedIn" class="shopping-cart">
-                    <img src="/shopping-cart.png" alt="shopping cart" />
+                    <RouterLink :to="{ name: 'cart' }">
+                        <img src="/shopping-cart.png" alt="shopping cart" />
+                    </RouterLink>
                 </li>
                 <li>
                     <RouterLink
                         v-if="isLoggedIn"
-                        to="/usercenter"
+                        :to="{ name: 'usercenter' }"
                         class="router-link-custom"
                         >{{ username }}</RouterLink
                     >
@@ -42,6 +44,7 @@ import { computed, onMounted, ref } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useSearchStore } from "@/stores/index";
 import { userTokenStore } from "@/stores/index";
+import type { Item } from "@/types";
 
 const tokenStore = userTokenStore();
 const route = useRoute();
@@ -60,30 +63,43 @@ const username = ref<string | null>(null);
 
 // loginCheck
 function loginCheck() {
+    console.log(tokenStore.isAuthenticated);
     isLoggedIn.value = tokenStore.isAuthenticated;
     username.value = tokenStore.username;
 }
 
 function search() {
     const url = "/backend/api/items/search";
-
+    let params = query.value;
     // search
-    if (query.value == "") {
-        query.value += "/all";
+    if (params == "") {
+        params += "/all/";
+    } else {
+        params += "/";
     }
 
-    fetch(`${url}/${query.value}`)
-        .then((response) => response.json())
-        .then((res) => {
-            store.setResults(res);
+    fetch(`${url}/${params}`)
+        .then((response) => {
+            if (!response.ok) {
+                console.error(response.statusText);
+                throw new Error("Network Invalid");
+            }
+            return response.json();
         })
-        .catch((error) => console.error(error));
+        .then((res) => {
+            let itemsList: Array<Item> = [];
+            for (let i = 0;i < res.length;i++) {
+                itemsList.push(res[i]);
+            }
+            store.setResults(itemsList);
+        })
+        .catch((error) => console.error(error.message));
 }
 
 function logout(event: Event) {
     event.preventDefault();
     tokenStore.clearToken();
-    window.location.href = '/';
+    router.push('/');
 }
 
 onMounted(() => {
@@ -158,7 +174,6 @@ onMounted(() => {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border: 2px solid white;
     color: white;
     border-radius: 4px;
 }

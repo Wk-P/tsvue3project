@@ -44,10 +44,9 @@ class CustomRegister(APIView):
 
         try:
             if CustomUser.objects.filter(username=username).exists():
-                return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "User already exists"}, status=status.HTTP_409_CONFLICT)
             try:
                 CustomUser.objects.create_user(username=username, password=password, email=email)
-                print("注册成功")
                 return Response({"message": "User registered successfully"}, status=status.HTTP_200_OK)
             except ValidationError as e:
                 raise e

@@ -45,6 +45,10 @@ const fetchItems = async () => {
     const url = "/backend/api/items/all";
     let params = "";
 
+    if (params == "") {
+        params += '/';
+    }
+
     try {
         // const response = await fetch(queryBaseURL);
         const response = await fetch(`${url}/${params}`);

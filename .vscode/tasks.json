@@ -26,7 +26,8 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver 192.168.1.6:8000 }"
+                "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver localhost:8000 }"
+                // "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver 192.168.1.6:8000 }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

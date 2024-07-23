@@ -143,10 +143,12 @@ REST_FRAMEWORK = {
 
 CSRF_TRUSTED_ORIGINS = [
     'http://192.168.1.6:3000',  # 替换为你的前端地址
+    'http://localhost:3000',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://192.168.1.6:3000',  # 前端地址
+    'http://localhost:3000',
 ]
 
 CSRF_COOKIE_SECURE = True

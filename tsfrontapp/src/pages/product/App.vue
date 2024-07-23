@@ -38,14 +38,10 @@
             <div class="details">
                 <ul class="details-list">
                     <li>
-                        <RouterLink :to="{ name: 'details' }" class="item-link"
-                            >详情</RouterLink
-                        >
+                        <RouterLink :to="{ name: 'details' }" class="item-link">详情</RouterLink>
                     </li>
                     <li>
-                        <RouterLink :to="{ name: 'comments' }" class="item-link"
-                            >评论</RouterLink
-                        >
+                        <RouterLink :to="{ name: 'comments' }" class="item-link">评论</RouterLink>
                     </li>
                 </ul>
             </div>
@@ -58,6 +54,7 @@
 import HeadNav from "@/components/HeadNav.vue";
 import router from "@/router";
 import { useItemStore, userTokenStore } from "@/stores";
+import { getCSRFToken } from "@/utils/validate";
 import { ref, watch, computed } from "vue";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 const store = useItemStore();
@@ -106,7 +103,7 @@ function createOrder() {
 
     const message = `Order:\n Item name: ${item.value?.name}\nUser: ${tokenStore.username}\nSum of items: ${orderSum.value}\nConfirm your order and continue?`
 
-    if(!confirm(message)) {
+    if (!confirm(message)) {
         return;
     }
 
@@ -114,36 +111,39 @@ function createOrder() {
     const url = "/backend/api/orders/create";
     let params = "";
 
-    fetch(`${url}/${params}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                itemId: itemId,
-                username: tokenStore.username,
-                orderSum: orderSum.value,
-            }),
-        }
-    )
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network invalid as an error");
+    getCSRFToken().then((csrftoken) => {
+        fetch(`${url}/${params}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'X-CSRFToken': csrftoken || "",
+                },
+                body: JSON.stringify({
+                    itemId: itemId,
+                    username: tokenStore.username,
+                    orderSum: orderSum.value,
+                }),
             }
-            return response.json();
-        })
-        .then((data) => {
-            alert(`Order has been submitted\nOrder id: ${data.order_id}\n`);
-        })
-        .catch((error) => {
-            console.error(error.message);
-        });
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network invalid Invalid");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert(`Order has been submitted\nOrder id: ${data.order_id}\n`);
+            })
+            .catch((error) => {
+                console.error(error.message);
+            });
+    }).catch(error => console.error(error.message));
 }
 
-function addFavorite() {}
+function addFavorite() { }
 
-function addComment() {}
+function addComment() { }
 
 // 监听路由变化
 watch(
@@ -280,6 +280,7 @@ watch(
     height: 100%;
     width: auto;
 }
+
 .head-on a:hover {
     cursor: pointer;
     border: 2px solid #ccc;
@@ -368,7 +369,7 @@ watch(
     color: white;
 }
 
-.add-order-button > button:last-child {
+.add-order-button>button:last-child {
     box-sizing: border-box;
     height: 100%;
     width: 28%;
@@ -406,6 +407,7 @@ watch(
     background-color: #ddd;
     transition: all 0.2s ease-in-out;
 }
+
 .add-favorite-button button:hover,
 .add-comments-button button:hover {
     cursor: pointer;
