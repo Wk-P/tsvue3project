@@ -31,7 +31,7 @@
                         登出
                     </button>
                     <RouterLink v-else="" to="/login" class="router-link-custom"
-                        >登录</RouterLink
+                        >登录&nbsp;/&nbsp;注册</RouterLink
                     >
                 </li>
             </div>

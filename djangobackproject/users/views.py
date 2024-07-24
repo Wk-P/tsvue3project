@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from users.models import CustomUser, UserItem
+from users.models import CustomUser
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
-from items.models import Item
+from items.models import Item, UserItem
 
 # Create your views here.
 
