@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'items',
     'users',
     'orders',
+    'testmysql',
 ]
 
 MIDDLEWARE = [
@@ -83,8 +84,14 @@ WSGI_APPLICATION = 'djangobackproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_db',
+        'USER': 'root',
+        'PASSWORD': 'zhlX682075+*+',
+        'HOST': '8.209.204.80',
+        'PORT': 3306,
     }
 }
 
