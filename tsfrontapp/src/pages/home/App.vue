@@ -46,7 +46,7 @@ const fetchItems = async () => {
     let params = "";
 
     if (params == "") {
-        params += '/';
+        params += "/";
     }
 
     try {
@@ -92,7 +92,7 @@ watch(searchResultsComputed, (newResults, oldResults) => {
 <style scoped>
 .block {
     width: 100%;
-    height: 100%;
+    height: auto;
 }
 .support {
     width: 100%;
@@ -184,4 +184,38 @@ watch(searchResultsComputed, (newResults, oldResults) => {
     cursor: pointer;
     color: #00e3a3;
 }
+
+.img-display-block {
+    width: 100%;
+    box-sizing: border-box;    
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: auto;
+}
+
+.img-display-block ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 40px;
+    padding: 0;
+    margin: 0;
+    width: 80%;
+}
+.img-display-block ul li {
+    box-sizing: border-box;
+    box-shadow: 0 0 10px 4px #444;
+    border-radius: 20px;
+    overflow: hidden; /* 确保超出部分被裁剪 */
+}
+
+.img-display-block ul li img {
+    display: block; /* 移除底部空白 */
+    width: 100%; /* 确保图片占满整个容器 */
+    height: 100%;
+    object-fit: cover; /* 确保图片按比例裁剪以适应容器 */
+}
+
 </style>

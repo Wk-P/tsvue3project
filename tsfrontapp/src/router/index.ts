@@ -8,63 +8,21 @@ import Details from "@/pages/details/App.vue";
 import UserCenter from "@/pages/usercenter/App.vue"
 import Orders from "@/pages/orders/App.vue";
 import Cart from "@/pages/cart/App.vue";
-import Favorite from "@/pages/favorite/App.vue"
+import Favorite from "@/pages/favorite/App.vue";
+
+import MobileHome from  "@/pages/mobilehome/App.vue";
+import Start from "@/pages/start/App.vue";
 
 const routes = [
     {
         path: "/",
-        name: "home",
-        component: Home,
+        name: "mobilehome",
+        component: MobileHome,
     },
     {
-        path: "/login",
-        name: "login",
-        component: Login,
-    },
-    {
-        path: "/register",
-        name: "register",
-        component: Register,
-    },
-    {
-        path: "/product/:productId",
-        name: "product",
-        component: Product,
-        children: [
-            {
-                path: "details",
-                name: "details",
-                component: Details,
-            },
-            {
-                path: "comments",
-                name: "comments",
-                component: Comments,
-            },
-        ],
-    },
-    {
-        path: "/usercenter",
-        name: "usercenter",
-        component: UserCenter,
-        redirect: { name: 'orders' }, // 设置默认路由重定向
-        children: [
-            {
-                path: "orders",
-                name: "orders",
-                component: Orders,
-            },
-            {
-                path: "favorite",
-                name: "favorite",
-                component: Favorite,
-            },
-            {
-                path: "cart",
-                name: "cart",
-                component: Cart,
-            },
-        ]
+        path: "/start",
+        name: "start",
+        component: Start,
     }
 ];
 
