@@ -122,7 +122,6 @@ function register(event: Event) {
                 return response.json();
             })
             .then((data) => {
-                console.log(data.message);
                 window.location.href = ('/');
             })
             .catch((error) => {

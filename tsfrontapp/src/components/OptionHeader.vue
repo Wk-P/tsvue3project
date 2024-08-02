@@ -1,9 +1,9 @@
 <template>
     <ul class="head">
-        <li @click="usercenter"><img src="/img/user.png" alt="" /></li>
+        <li @click="usercenter"><img src="/img/user.png" alt="usercenter" /></li>
         <li class="title"><p>ASLIN</p></li>
-        <li @click="favorite"><img src="/img/heart.png" alt="" /></li>
-        <li @click="cart"><img src="/img/cart.png" alt="" /></li>
+        <li @click="favorite"><img src="/img/heart.png" alt="favorite" /></li>
+        <li @click="cart"><img src="/img/cart.png" alt="cart" /></li>
     </ul>
     <ul class="filter-option">
         <li class="title"><p>BRAND</p></li>
@@ -16,7 +16,7 @@
         </li>
     </ul>
     <ul class="filter-option">
-        <li class="title"><p>KING</p></li>
+        <li class="title"><p>KIND</p></li>
         <li class="options-block">
             <select class="selector">
                 <option value="brandOption1Sub1">brand1</option>
@@ -35,15 +35,16 @@
             </select>
         </li>
     </ul>
-    <div class="filter"><button @click="filterClick()"><span v-html="reloadTextContent"></span>filter</button></div>
+    <div class="filter">
+        <button @click="filterClick()">
+            <span v-html="reloadTextContent"></span>filter
+        </button>
+    </div>
 </template>
 
 <script lang="ts" setup name="OptionHeader">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-const brandOption1 = ref();
-const brandOption2 = ref();
-const brandOption3 = ref();
 
 const reloadTextContent = ref("&#8635");
 
@@ -63,9 +64,9 @@ function cart() {
 function filterClick() {
     alert("Filter");
 }
+
 </script>
 <style scoped>
-
 .filter {
     width: 100%;
     height: 5vh;
@@ -98,7 +99,7 @@ function filterClick() {
 }
 
 .head {
-    padding: 0 1rem;
+    padding: 0 5px;
     background-color: gray;
     height: 5vh;
     display: flex;
@@ -109,6 +110,7 @@ function filterClick() {
 .head > li {
     box-sizing: border-box;
     height: 100%;
+    width: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;

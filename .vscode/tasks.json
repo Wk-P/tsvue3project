@@ -10,7 +10,7 @@
             },
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             },
             "presentation": {
                 "reveal": "always",
@@ -26,15 +26,15 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver localhost:8000 }"
-                // "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver 192.168.1.6:8000 }"
+                // "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver localhost:8000 }"
+                "& { .\\.venv\\Scripts\\activate; python .\\djangobackproject\\manage.py runserver 192.168.1.6:8000 }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             },
             "presentation": {
                 "reveal": "always",
@@ -45,13 +45,8 @@
             "label": "Start Frontend and Backend",
             "type": "shell",
             "command": "echo",
-            "args": [
-                "Starting Frontend and Backend..."
-            ],
-            "dependsOn": [
-                "Start Frontend",
-                "Start Backend"
-            ],
+            "args": ["Starting Frontend and Backend..."],
+            "dependsOn": ["Start Frontend", "Start Backend"],
             "group": {
                 "kind": "build",
                 "isDefault": true

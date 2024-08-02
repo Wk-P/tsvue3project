@@ -78,10 +78,10 @@ const loadMore = () => {
 let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
-    // IMPORTANT!
+    // 监视器对象
+    // observer object
     observer = new IntersectionObserver(
         ([entry]) => {
-            console.log("当前监视的对象:", entry.target);
             if (entry.isIntersecting) {
                 loadMore();
             }
@@ -89,7 +89,7 @@ onMounted(() => {
         { threshold: 0.6 }
     );
 
-    // bind target DOM element to observer
+    // bind target DOM element to observer （绑定监视对象）
     nextTick(() => {
         if (loader.value && observer) {
             observer.observe(loader.value);
@@ -98,6 +98,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    // bind target 
     if (loader.value && observer) {
         observer.unobserve(loader.value);
     }

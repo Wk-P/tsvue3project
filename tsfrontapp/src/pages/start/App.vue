@@ -16,28 +16,29 @@ const containers = ref<HTMLElement | null>(null);
 
 // dynamic set height
 const updateContainerHeight = () => {
-  if (containersHead.value && containers.value) {
-    const headHeight = containersHead.value.clientHeight;
-    containers.value.style.marginTop = `${headHeight}px`;
-  }
+    if (containersHead.value && containers.value) {
+        const headHeight = containersHead.value.clientHeight;
+        containers.value.style.marginTop = `${headHeight}px`;
+    }
 };
 
-
-
 onMounted(() => {
-  updateContainerHeight();
-  // Optional: update height on window resize
-  window.addEventListener('resize', updateContainerHeight);
+    updateContainerHeight();
+    // Optional: update height on window resize
+    window.addEventListener("resize", updateContainerHeight);
 });
 
-watch(() => containersHead.value?.clientHeight, () => {
-  updateContainerHeight();
-}, { immediate: true });
+watch(
+    () => containersHead.value?.clientHeight,
+    () => {
+        updateContainerHeight();
+    },
+    { immediate: true }
+);
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateContainerHeight);
+    window.removeEventListener("resize", updateContainerHeight);
 });
-
 </script>
 <style scoped>
 .containers {

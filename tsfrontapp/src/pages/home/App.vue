@@ -187,7 +187,7 @@ watch(searchResultsComputed, (newResults, oldResults) => {
 
 .img-display-block {
     width: 100%;
-    box-sizing: border-box;    
+    box-sizing: border-box;
     padding: 20px;
     display: flex;
     flex-direction: row;
@@ -217,5 +217,4 @@ watch(searchResultsComputed, (newResults, oldResults) => {
     height: 100%;
     object-fit: cover; /* 确保图片按比例裁剪以适应容器 */
 }
-
 </style>

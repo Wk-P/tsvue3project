@@ -56,7 +56,7 @@
 import { ref } from "vue";
 
 function filter() {
-    console.log("筛选");
+    console.log("Clicked filter button");
 }
 
 interface Option {

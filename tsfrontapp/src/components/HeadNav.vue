@@ -63,7 +63,6 @@ const username = ref<string | null>(null);
 
 // loginCheck
 function loginCheck() {
-    console.log(tokenStore.isAuthenticated);
     isLoggedIn.value = tokenStore.isAuthenticated;
     username.value = tokenStore.username;
 }
